@@ -1,0 +1,15 @@
+{
+  "name": "azbry-base",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "latest",
+    "pino": "^8.5.0",
+    "axios": "^1.5.0",
+    "qrcode-terminal": "^0.12.0",
+    "@vrypt/buttons-warpper": "latest"
+  }
+}
