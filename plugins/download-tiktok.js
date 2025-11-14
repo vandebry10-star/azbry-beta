@@ -1,15 +1,41 @@
-import axios from "axios"
-import config from "../config.js"
+// plugins/tiktok.js
+// Download video TikTok pakai Botcahx API
 
-export default async (conn, m, text, from) => {
-  if (!text.startsWith(".tt ")) return
-  let url = text.split(" ")[1]
-  if (!url) return conn.sendMessage(from, { text: "Masukkan URL Tiktok!" })
+const axios = require("axios")
 
-  try {
-    let res = await axios.get(`https://api.botcahx.eu.org/api/dl/tiktok?url=${url}&apikey=${config.apikey}`)
-    await conn.sendMessage(from, { video: { url: res.data.result.video }, caption: "Berhasil ✓" })
-  } catch (e) {
-    await conn.sendMessage(from, { text: "❌ Gagal mengambil video" })
+module.exports = {
+  command: ['tiktok', 'tt', 'ttdl'],
+  help: ['tiktok <url>', 'tt <url>'],
+  tags: ['downloader'],
+
+  async run({ conn, m, from, args }) {
+    let url = args[0]
+    if (!url) return m.reply(`❗ Masukkan URL TikTok\nContoh: .tt https://vt.tiktok.com/...`)
+
+    try {
+      const APIKEY = global.botcahx // pastikan sudah ada di config.js
+
+      let res = await axios.get(
+        `https://api.botcahx.eu.org/api/dowloader/tiktok?url=${encodeURIComponent(url)}&apikey=${APIKEY}`
+      )
+
+      if (!res.data || !res.data.result?.video) {
+        return m.reply("⚠️ Gagal mengambil video TikTok.")
+      }
+
+      let video = res.data.result.video
+
+      await conn.sendMessage(
+        from,
+        {
+          video: { url: video },
+          caption: "🎬 *Berhasil download TikTok!*"
+        },
+        { quoted: m }
+      )
+    } catch (e) {
+      console.log(e)
+      return m.reply("❌ Terjadi kesalahan mengambil video TikTok.")
+    }
   }
 }
